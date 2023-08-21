@@ -1,0 +1,32 @@
+name: Render and Store Presentation
+
+on:
+  push:
+    branches:
+      - * 
+  workflow_dispatch:
+      
+jobs:
+  render-presentation:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up R
+      uses: r-lib/actions/setup-r@v1
+
+    - name: Install dependencies
+      run: |
+        Rscript -e "install.packages(c('rmarkdown'))"
+
+    - name: Render presentation
+      run: |
+        Rscript -e "rmarkdown::render('presentation.Rmd', output_dir = 'output')"
+
+    - name: Archive artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: presentation-artifact
+        path: output/
